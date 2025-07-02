@@ -1,0 +1,34 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+expo-error.log*
+yarn.lock
+
+# Expo
+.expo/
+.expo-shared/
+
+# React Native
+android/
+ios/
+*.keystore
+*.jks
+
+# VS Code settings
+.vscode/
+
+# Metro/React Native/Expo cache
+*.expo
+.expo/
+*.DS_Store
+*.expo-shared
+*.expo
+*.swp
+*.swo
+
+# Misc
+.env
+*.log
+*.tmp
