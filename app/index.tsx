@@ -106,18 +106,30 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        padding: 24,
+        padding: 20,
+        alignItems: 'center',
     },
     picker: {
-        height: 50,   width: '100%',      // 或者固定宽度如 150
-        marginBottom: 10,
+        width: "70%",
+        borderRadius: 8,
+        margin: 10,
+        paddingHorizontal: 12,
+        height: 48,
+        backgroundColor: "#fff",
+        fontSize: 18,
     },
     input: {
+        width: "70%",
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 6,
+        borderRadius: 8,
         padding: 12,
-        marginBottom: 10,
+        margin: 10,
+        // Add
+        paddingHorizontal: 12,
+        height: 48,
+        backgroundColor: "#fff",
+        fontSize: 18,
     },
     error: {
         color: 'red',
