@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View, Text } from 'react-native';
 import { useState, useEffect } from 'react';
 import { TextInput, StyleSheet } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 export default function App() {
 
@@ -20,11 +21,20 @@ export default function App() {
         return !isNaN(num) && num >= 1 && num <= 31;
     };
 
+    // useEffect(() => {
+    //     if (isMonthValid(month) && isDayValid(day)) {
+    //         fetchFact();
+    //     }
+    // }, [month, day]);
+
     useEffect(() => {
         if (isMonthValid(month) && isDayValid(day)) {
             fetchFact();
+        } else {
+            setFact("");  
         }
     }, [month, day]);
+
 
     const onMonthChange = (text: string) => {
         const trimmed = text.trim();
@@ -70,13 +80,16 @@ export default function App() {
     return (
         <View style={styles.container}>
             {fact ? <Text style={styles.fact}>{fact}</Text> : null}
-            <TextInput
-                style={styles.input}
-                placeholder="Month"
-                value={month}
-                autoCapitalize="none"
-                onChangeText={onMonthChange}
-            />
+            <Picker
+            selectedValue={month}
+            onValueChange={(itemValue) => setMonth(itemValue)}
+            style={styles.picker}
+            >
+            <Picker.Item label="Select month" value="" />
+            {Array.from({ length: 12 }, (_, i) => (
+                <Picker.Item key={i} label={`${i + 1}`} value={`${i + 1}`} />
+            ))}
+            </Picker>
             <TextInput
                 style={styles.input}
                 placeholder="Day"
@@ -94,6 +107,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         padding: 24,
+    },
+    picker: {
+        height: 50,   width: '100%',      // 或者固定宽度如 150
+        marginBottom: 10,
     },
     input: {
         borderWidth: 1,
