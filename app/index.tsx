@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text } from 'react-native';
 import { useState, useEffect } from 'react';
-import { TextInput, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 export default function App() {
@@ -16,9 +16,28 @@ export default function App() {
         return !isNaN(num) && num >= 1 && num <= 12;
     };
 
-    const isDayValid = (d: string) => {
-        const num = Number(d);
-        return !isNaN(num) && num >= 1 && num <= 31;
+    const isDayValid = (d: string, m: string) => {
+        const dayNum = Number(d);
+        const monthNum = Number(m);
+
+        if (isNaN(dayNum) || dayNum < 1) return false;
+
+        const daysInMonth = {
+            1: 31,
+            2: 28,
+            3: 31,
+            4: 30,
+            5: 31,
+            6: 30,
+            7: 31,
+            8: 31,
+            9: 30,
+            10: 31,
+            11: 30,
+            12: 31
+        };
+
+        return dayNum <= (daysInMonth[monthNum] || 0);
     };
 
     // useEffect(() => {
@@ -28,10 +47,10 @@ export default function App() {
     // }, [month, day]);
 
     useEffect(() => {
-        if (isMonthValid(month) && isDayValid(day)) {
+        if (isMonthValid(month) && isDayValid(day, month)) {
             fetchFact();
         } else {
-            setFact("");  
+            setFact("");
         }
     }, [month, day]);
 
@@ -51,7 +70,7 @@ export default function App() {
         const trimmed = text.trim();
         setDay(trimmed);
         setFact('');
-        if (trimmed && !isDayValid(trimmed)) {
+        if (trimmed && !isDayValid(trimmed, month)) {
             setError(`Invalid day: ${trimmed}`);
         } else {
             setError('');
@@ -79,25 +98,41 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-            {fact ? <Text style={styles.fact}>{fact}</Text> : null}
-            <Picker
-            selectedValue={month}
-            onValueChange={(itemValue) => setMonth(itemValue)}
-            style={styles.picker}
-            >
-            <Picker.Item label="Select month" value="" />
-            {Array.from({ length: 12 }, (_, i) => (
-                <Picker.Item key={i} label={`${i + 1}`} value={`${i + 1}`} />
-            ))}
-            </Picker>
-            <TextInput
-                style={styles.input}
-                placeholder="Day"
-                value={day}
-                autoCapitalize="none"
-                onChangeText={onDayChange}
-            />
-            {error ? <Text style={styles.error}>{error}</Text> : null}
+            <View style={styles.factSection}>
+                {fact ? (
+                    <Text style={styles.fact} numberOfLines={10} ellipsizeMode="tail">
+                        {fact}
+                    </Text>
+                ) : null}
+            </View>
+
+            <View style={styles.pickerSection}>
+                <Picker
+                    selectedValue={month}
+                    onValueChange={onMonthChange}
+                    style={styles.picker}
+                >
+                    <Picker.Item label="Select month" value="" />
+                    {Array.from({ length: 12 }, (_, i) => (
+                        <Picker.Item key={i} label={`${i + 1}`} value={`${i + 1}`} />
+                    ))}
+                </Picker>
+
+                <Picker
+                    selectedValue={day}
+                    onValueChange={onDayChange}
+                    style={styles.picker}
+                >
+                    <Picker.Item label="Select day" value="" />
+                    {Array.from({ length: 31 }, (_, i) => (
+                        <Picker.Item key={i} label={`${i + 1}`} value={`${i + 1}`} />
+                    ))}
+                </Picker>
+            </View>
+
+            <View style={styles.errorSection}>
+                {error ? <Text style={styles.error}>{error}</Text> : null}
+            </View>
         </View>
     );
 }
@@ -105,41 +140,38 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff',
+        padding: 16,
+    },
+    factSection: {
+        flex: 1,
         justifyContent: 'center',
-        padding: 20,
         alignItems: 'center',
+        paddingHorizontal: 10,
+    },
+    fact: {
+        fontSize: 16,
+        color: '#333',
+        textAlign: 'center',
+    },
+    pickerSection: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: 80, // 固定高度，不被 fact 内容影响
+        marginVertical: 10,
     },
     picker: {
-        width: "70%",
-        borderRadius: 8,
-        margin: 10,
-        paddingHorizontal: 12,
-        height: 48,
-        backgroundColor: "#fff",
-        fontSize: 18,
+        flex: 1,
+        marginHorizontal: 8,
     },
-    input: {
-        width: "70%",
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        padding: 12,
-        margin: 10,
-        // Add
-        paddingHorizontal: 12,
-        height: 48,
-        backgroundColor: "#fff",
-        fontSize: 18,
+    errorSection: {
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     error: {
         color: 'red',
-        marginBottom: 12,
-        textAlign: 'center',
-    },
-    fact: {
-        marginTop: 20,
-        fontSize: 18,
-        textAlign: 'center',
-        color: '#333',
+        fontSize: 14,
     },
 });
